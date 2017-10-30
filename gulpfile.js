@@ -38,7 +38,7 @@ var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 gulp.task('serve', function () {
     browserSync.init({
-        server: "./"
+        server: "./API/"
     });
     gulp.watch("**/less/**/*.less", ['less']);
     gulp.watch("**/*.html").on('change', reload);

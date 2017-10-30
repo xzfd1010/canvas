@@ -22,9 +22,10 @@ function fill(context){
     context.fillStyle = "rgba(0,0,255,0.5)"
     context.fillRect(30,30,50,50)
 }
-fill(context)
+// fill(context)
 // 描边
 function stroke(context){
+    
     context.strokeStyle = "#ff0000"
     context.strokeRect(10,10,50,50)
 
@@ -37,9 +38,11 @@ function clear(context){
     context.clearRect(40,40,10,10)
 }
 
+stroke(context)
+
 clear(context)
 
-drawImg(drawing)
+// drawImg(drawing)
 
 
 
