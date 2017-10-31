@@ -36,13 +36,26 @@ window.onload = function () {
     canvas.height = WINDOW_HEIGHT
 
     curShowTimeSeconds = getCurrentShowTimeSeconds()
-    setInterval(
+    var interval = setInterval(
         function () {
             render(context)
             update()
         }
         , 50
     )
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            clearInterval(interval)
+        } else {
+            interval = setInterval(
+                function () {
+                    render(context)
+                    update()
+                }
+                , 50
+            )
+        }
+    })
 }
 
 function update() {
