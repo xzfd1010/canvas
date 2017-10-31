@@ -6,6 +6,8 @@ var MARGIN_TOP  // 数字距离画布左边缘的距离
 var NUMBER_MARGIN_LEFT // 每个数字 + margin占的宽度
 var COLON_WIDTH // 冒号 + margin的宽度
 
+var type = 0 // 表示倒计时还是时钟，0位时钟/1为倒计时
+
 var endTime = new Date() // 当前时间
 endTime.setTime(endTime.getTime() + 3600 * 1000)
 var curShowTimeSeconds = 0  // 用于保存当前时间与截止时间秒数的差值
@@ -15,9 +17,9 @@ var balls = [] // 保存生成的小球
 // 保存小球的随机颜色
 const colors = ["#33B5E5", "#0099CC", "#AA66CC", "#9933CC", "#99CC00", "#669900", "#FFBB33", "#FF8800", "#FF4444", "#CC0000"]
 
-
 window.onload = function () {
 
+    // 变量初始化
     WINDOW_WIDTH = document.body.clientWidth
     WINDOW_HEIGHT = document.body.clientHeight
 
@@ -35,7 +37,8 @@ window.onload = function () {
     canvas.width = WINDOW_WIDTH
     canvas.height = WINDOW_HEIGHT
 
-    curShowTimeSeconds = getCurrentShowTimeSeconds()
+    // 获取当前时间的秒数
+    curShowTimeSeconds = getCurrentShowTimeSeconds(type)
     var interval = setInterval(
         function () {
             render(context)
@@ -43,6 +46,7 @@ window.onload = function () {
         }
         , 50
     )
+    // 处理小球堆积问题
     document.addEventListener("visibilitychange", function () {
         if (document.hidden) {
             clearInterval(interval)
@@ -58,8 +62,40 @@ window.onload = function () {
     })
 }
 
+function render(ctx) {
+
+    // 清空上次的图像
+    ctx.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+    var hours = parseInt(curShowTimeSeconds / 3600)
+    var minutes = parseInt((curShowTimeSeconds - hours * 3600) / 60)
+    var seconds = curShowTimeSeconds % 60
+
+    renderDigit(MARGIN_LEFT, MARGIN_TOP, parseInt(hours / 10), ctx)
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT, MARGIN_TOP, parseInt(hours % 10), ctx)
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 2, MARGIN_TOP, 10, ctx) // 此时10代表的是数组中的索引
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 2 + COLON_WIDTH, MARGIN_TOP, parseInt(minutes / 10), ctx) // 此时10代表的是数组中的索引
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 3 + COLON_WIDTH, MARGIN_TOP, parseInt(minutes % 10), ctx) // 此时10代表的是数组中的索引
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 4 + COLON_WIDTH, MARGIN_TOP, 10, ctx) // 此时10代表的是数组中的索引
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 4 + COLON_WIDTH * 2, MARGIN_TOP, parseInt(seconds / 10), ctx) // 此时10代表的是数组中的索引
+    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 5 + COLON_WIDTH * 2, MARGIN_TOP, parseInt(seconds % 10), ctx) // 此时10代表的是数组中的索引
+
+    // 根据数组绘制小球
+    for (var i = 0; i < balls.length; i++) {
+        ctx.fillStyle = balls[i].color
+
+        ctx.beginPath()
+        ctx.arc(balls[i].x, balls[i].y, RADIUS, 0, 2 * Math.PI, true)
+        ctx.closePath()
+
+        ctx.fill()
+    }
+
+}
+
+// 根据当前时间更新数字 + 小球数组
 function update() {
-    var nextShowTimeSeconds = getCurrentShowTimeSeconds() //每过50ms就获取一次当前时间
+    var nextShowTimeSeconds = getCurrentShowTimeSeconds(type) //每过50ms就获取一次当前时间
 
     var nextHours = parseInt(nextShowTimeSeconds / 3600)
     var nextMinutes = parseInt((nextShowTimeSeconds - nextHours * 3600) / 60)
@@ -98,6 +134,30 @@ function update() {
     updateBalls()
 }
 
+
+// 遍历二维数组，添加小球
+function addBalls(x, y, num) {
+    for (var i = 0; i < digit[num].length; i++) {
+        for (var j = 0; j < digit[num][i].length; j++) {
+            if (digit[num][i][j] == 1) {
+                var centerX = x + j * 2 * (RADIUS + 1) + (RADIUS + 1)
+                var centerY = y + i * 2 * (RADIUS + 1) + (RADIUS + 1)
+                var aBall = {
+                    x: centerX,
+                    y: centerY,
+                    g: 1.5 + Math.random(), // 加速度1.5-2.5
+                    vx: Math.pow(-1, Math.ceil(Math.random() * 1000)) * 4, // -4 或者 +4
+                    vy: -5,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                }
+                balls.push(aBall)
+            }
+        }
+    }
+
+}
+
+// 更新小球的状态，删除出界的小球
 function updateBalls() {
     for (var i = 0; i < balls.length; i++) {
         balls[i].x += balls[i].vx
@@ -124,65 +184,18 @@ function updateBalls() {
 
 }
 
-// 遍历二维数组，添加小球
-function addBalls(x, y, num) {
-    for (var i = 0; i < digit[num].length; i++) {
-        for (var j = 0; j < digit[num][i].length; j++) {
-            if (digit[num][i][j] == 1) {
-                var centerX = x + j * 2 * (RADIUS + 1) + (RADIUS + 1)
-                var centerY = y + i * 2 * (RADIUS + 1) + (RADIUS + 1)
-                var aBall = {
-                    x: centerX,
-                    y: centerY,
-                    g: 1.5 + Math.random(), // 加速度1.5-2.5
-                    vx: Math.pow(-1, Math.ceil(Math.random() * 1000)) * 4, // -4 或者 +4
-                    vy: -5,
-                    color: colors[Math.floor(Math.random() * colors.length)]
-                }
-                balls.push(aBall)
-            }
-        }
-    }
-
-}
-
-function getCurrentShowTimeSeconds() {
+// 获取当前时间 / 与截止时间的差值
+function getCurrentShowTimeSeconds(type) {
     var curTime = new Date()
-    // var ret = endTime.getTime() - curTime.getTime()
-    // ret = Math.round(ret / 1000)
-
-    var ret = curTime.getHours() * 3600 + curTime.getMinutes() * 60 + curTime.getSeconds()
-    return ret
-    // return ret >= 0 ? ret : 0
-}
-
-function render(ctx) {
-
-    // 清空上次的图像
-    ctx.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
-
-    var hours = parseInt(curShowTimeSeconds / 3600)
-    var minutes = parseInt((curShowTimeSeconds - hours * 3600) / 60)
-    var seconds = curShowTimeSeconds % 60
-
-    renderDigit(MARGIN_LEFT, MARGIN_TOP, parseInt(hours / 10), ctx)
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT, MARGIN_TOP, parseInt(hours % 10), ctx)
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 2, MARGIN_TOP, 10, ctx) // 此时10代表的是数组中的索引
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 2 + COLON_WIDTH, MARGIN_TOP, parseInt(minutes / 10), ctx) // 此时10代表的是数组中的索引
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 3 + COLON_WIDTH, MARGIN_TOP, parseInt(minutes % 10), ctx) // 此时10代表的是数组中的索引
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 4 + COLON_WIDTH, MARGIN_TOP, 10, ctx) // 此时10代表的是数组中的索引
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 4 + COLON_WIDTH * 2, MARGIN_TOP, parseInt(seconds / 10), ctx) // 此时10代表的是数组中的索引
-    renderDigit(MARGIN_LEFT + NUMBER_MARGIN_LEFT * 5 + COLON_WIDTH * 2, MARGIN_TOP, parseInt(seconds % 10), ctx) // 此时10代表的是数组中的索引
-
-    for (var i = 0; i < balls.length; i++) {
-        ctx.fillStyle = balls[i].color
-
-        ctx.beginPath()
-        ctx.arc(balls[i].x, balls[i].y, RADIUS, 0, 2 * Math.PI, true)
-        ctx.closePath()
-
-        ctx.fill()
+    if (type == 0) {
+        var ret = curTime.getHours() * 3600 + curTime.getMinutes() * 60 + curTime.getSeconds()
+        return ret
+    } else if (type == 1) {
+        var ret = endTime.getTime() - curTime.getTime()
+        ret = Math.round(ret / 1000)
+        return ret >= 0 ? ret : 0
     }
+
 
 }
 
