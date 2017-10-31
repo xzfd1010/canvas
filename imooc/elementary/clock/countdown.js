@@ -18,8 +18,8 @@ const colors = ["#33B5E5", "#0099CC", "#AA66CC", "#9933CC", "#99CC00", "#669900"
 
 window.onload = function () {
 
-    WINDOW_WIDTH = document.body.clientWidth
-    WINDOW_HEIGHT = document.body.clientHeight
+    WINDOW_WIDTH = document.body.clientWidth - 20
+    WINDOW_HEIGHT = document.body.clientHeight - 20
 
     MARGIN_LEFT = Math.round(WINDOW_WIDTH / 10)
     MARGIN_TOP = Math.round(WINDOW_HEIGHT / 5)
