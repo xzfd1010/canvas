@@ -27,9 +27,9 @@ var uglify = require('gulp-uglify');
 //less
 var less = require("gulp-less");
 gulp.task("less", function () {
-    gulp.src("API/less/**/*.less")
+    gulp.src("imooc/less/**/*.less")
         .pipe(less())
-        .pipe(gulp.dest("API/css"))
+        .pipe(gulp.dest("imooc/css"))
         .pipe(reload({stream: true}));
 });
 
@@ -38,11 +38,11 @@ var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 gulp.task('serve', function () {
     browserSync.init({
-        server: "./API/"
+        server: "./imooc/elementary"
     });
     gulp.watch("**/less/**/*.less", ['less']);
     gulp.watch("**/*.html").on('change', reload);
-    gulp.watch('**/js/**/*.js', browserSync.reload);
+    gulp.watch('**/*.js', browserSync.reload);
 })
 
 var del = require('del');

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>多段弧线</title>
+</head>
+<body>
+<canvas id="canvas" width="1024" height="768" style="border:1px solid #ccc;display: block;margin:0 auto;"></canvas>
+<script>
+    window.onload = function(){
+        var canvas = document.getElementById('canvas');
+
+        canvas.width = 1024;
+        canvas.height = 768;
+
+        var context = canvas.getContext('2d');
+
+        context.lineWidth = 5;
+        context.strokeStyle = '#005588';
+        for(var i =0;i<10;i++) {
+            context.beginPath();// 重新规划路径
+            context.arc(50 + i*100, 60, 40, 0, 2 * Math.PI * (i+1)/10);
+            context.closePath();//连接封闭路径
+            context.stroke();
+        }
+
+        // 不封闭，顺时针
+        for(var i =0;i<10;i++) {
+            context.beginPath();
+            context.arc(50 + i*100, 180, 40, 0, 2 * Math.PI * (i+1)/10);
+            context.stroke();
+        }
+
+        // 封闭，逆时针
+        for(var i =0;i<10;i++) {
+            context.beginPath();
+            context.arc(50 + i*100, 300, 40, 0, 2 * Math.PI * (i+1)/10,true);
+            context.closePath();
+            context.stroke();
+
+        }
+
+        // 不封闭，逆时针
+        for(var i =0;i<10;i++) {
+            context.beginPath();
+            context.arc(50 + i*100, 420, 40, 0, 2 * Math.PI * (i+1)/10,true);
+            context.stroke();
+
+        }
+
+        // 封闭，填充，顺时针
+        context.fillStyle = '#005588';
+        for(var i =0;i<10;i++) {
+            context.beginPath();// 重新规划路径
+            context.arc(50 + i*100, 540, 40, 0, 2 * Math.PI * (i+1)/10);
+            context.closePath();
+            context.fill();
+            context.stroke();
+
+        }
+
+        // 不封闭，填充，顺时针
+        context.lineWidth = 1; // 会出现锯齿
+        context.fillStyle = '#005588';
+        for(var i =0;i<10;i++) {
+            context.beginPath();// 重新规划路径
+            context.arc(50 + i*100, 660, 40, 0, 2 * Math.PI * (i+1)/10);
+            context.fill();
+            context.stroke();
+        }
+    }
+</script>
+</body>
+</html>

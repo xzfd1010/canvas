@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>弧线</title>
+</head>
+<body>
+<canvas id="canvas" width="1024" height="768" style="display: block;margin:0 auto;"></canvas>
+<script>
+    window.onload = function(){
+        var canvas = document.getElementById('canvas');
+
+        canvas.width = 1024;
+        canvas.height = 768;
+
+        var context = canvas.getContext('2d');
+
+        context.lineWidth = 5;
+        context.strokeStyle = '#005588';
+        context.arc(300, 300, 200, 0, .5 * Math.PI,false);
+
+        context.stroke();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="canvas" width="1024" height="768" style="border:1px solid #ccc;display: block;margin:0 auto;">
+    <!--当前浏览器不支持canvas，请更换浏览器再试-->
+</canvas>
+<script>
+    window.onload = function () {
+        var canvas = document.getElementById('canvas');
+
+        canvas.width = 1024;
+        canvas.height = 768;
+
+        // 兼容性写法
+        if (canvas.getContext) {
+            var context = canvas.getContext('2d');
+        } else {
+            alert('当前浏览器不支持Canvas，请更换浏览器后再试');
+        }
+
+        context.lineCap = "round"
+        context.lineJoin = "round"
+
+        context.beginPath();
+
+        context.moveTo(100, 100);
+        context.lineTo(700, 700);
+        context.lineTo(100, 700);
+        context.lineTo(100, 100);
+        context.closePath();
+
+        // 颜色填充
+        // context.fillStyle = "rgb(2,100,30)";
+        // context.fill();
+
+        context.lineWidth = 5;// 线条宽度
+        context.strokeStyle = 'red';// 线条颜色
+        context.stroke();
+
+        // 画第二个部分需要
+        context.beginPath();
+        context.moveTo(200, 100);
+        context.lineTo(700, 600);
+        context.closePath();
+        context.strokeStyle = 'black';
+        context.stroke();
+    };
+</script>
+</body>
+</html>

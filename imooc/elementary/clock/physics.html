@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="canvas" style="border:1px solid #aaa;display: block;margin:50px auto;"></canvas>
+<script>
+    // 坐标位置，半径，加速度，x、y方向上的速度，颜色
+    var ball = {x:512,y:200,r:20,g:2,vx:-4,vy:-20,color:"#005588"}
+    window.onload = function(){
+        var canvas = document.getElementById("canvas")
+        canvas.width = 1024
+        canvas.height = 768
+
+        var context = canvas.getContext("2d")
+
+        setInterval(
+            function(){
+                render(context)
+                update()
+            }
+            ,50
+        )
+    }
+
+    // 模拟物理体系
+    function update(){
+        ball.x += ball.vx
+        ball.y += ball.vy
+        ball.vy += ball.g
+
+        // 碰撞检测
+        if(ball.y >= 768 - ball.r){
+            ball.y = 768 - ball.r
+            ball.vy = -ball.vy*.5 // 模拟阻力，其实这里vy始终不会为0
+        }
+    }
+
+    function render(ctx){
+        ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height)
+
+        ctx.fillStyle = ball.color
+        ctx.beginPath()
+        ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI)
+        ctx.closePath()
+
+        ctx.fill()
+    }
+</script>
+</body>
+</html>
